@@ -1,0 +1,212 @@
+// Custom Animations for Tailwind-like effects
+.auth-content {
+  // Custom animation keyframes
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+  }
+
+  @keyframes float-slow {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  @keyframes float-delayed {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    33% { transform: translateY(-15px) rotate(5deg); }
+    66% { transform: translateY(5px) rotate(-5deg); }
+  }
+
+  @keyframes ping-slow {
+    0% { transform: scale(1); opacity: 1; }
+    75%, 100% { transform: scale(2); opacity: 0; }
+  }
+
+  @keyframes pulse-slow {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  @keyframes bounce-slow {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+  }
+
+  @keyframes bounce-subtle {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+  }
+
+  // Animation classes
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-float-slow {
+    animation: float-slow 8s ease-in-out infinite;
+  }
+
+  .animate-float-delayed {
+    animation: float-delayed 7s ease-in-out infinite;
+  }
+
+  .animate-ping-slow {
+    animation: ping-slow 3s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+
+  .animate-pulse-slow {
+    animation: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .animate-bounce-slow {
+    animation: bounce-slow 6s infinite;
+  }
+
+  .animate-bounce-subtle {
+    animation: bounce-subtle 3s ease-in-out infinite;
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 0.6s ease-out both;
+  }
+
+  .animate-shake {
+    animation: shake 0.5s ease-in-out;
+  }
+
+  .animate-fade-in {
+    animation: fade-in-up 0.4s ease-out 0.2s both;
+  }
+
+  // Animation delays
+  .animation-delay-100 {
+    animation-delay: 0.1s;
+  }
+
+  .animation-delay-200 {
+    animation-delay: 0.2s;
+  }
+
+  .animation-delay-300 {
+    animation-delay: 0.3s;
+  }
+
+  .animation-delay-400 {
+    animation-delay: 0.4s;
+  }
+
+  .animation-delay-500 {
+    animation-delay: 0.5s;
+  }
+
+  .animation-delay-600 {
+    animation-delay: 0.6s;
+  }
+
+  .animation-delay-700 {
+    animation-delay: 0.7s;
+  }
+
+  // Fix for Ionic input alignment and styling
+  ion-item {
+    --background: transparent;
+    --inner-padding-end: 0;
+    --padding-start: 0;
+    --min-height: 64px;
+  }
+
+  ion-input {
+    --padding-start: 0;
+    --padding-end: 0;
+    --padding-top: 0;
+    --padding-bottom: 0;
+  }
+
+  // Ensure proper contrast for inputs and fix alignment
+  .text-white::placeholder {
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+
+  // Fix the input field height and alignment
+  .h-16 {
+    height: 4rem;
+  }
+
+  .h-full {
+    height: 100%;
+  }
+
+  // Additional fixes for better visual hierarchy
+  // Using direct CSS instead of Tailwind class references
+  .custom-bg-transparent {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  .custom-border-light {
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  // Improve text readability
+  .custom-text-light {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .custom-text-lighter {
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  // Fix focus states using direct CSS
+  ion-item.focused {
+    border-color: #dbfb24 !important;
+    background-color: rgba(255, 255, 255, 0.1) !important;
+  }
+
+  // Specific styling for input containers to ensure proper alignment
+  .input-container {
+    position: relative;
+    margin-bottom: 1.5rem;
+  }
+
+  .input-container ion-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.25rem;
+    color: rgba(255, 255, 255, 0.6);
+    z-index: 10;
+    transition: color 0.3s ease;
+  }
+
+  .input-container ion-item {
+    padding-left: 3rem !important;
+  }
+
+  // Ensure the card background is properly transparent
+  .auth-card-container {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .auth-card-header {
+    background: linear-gradient(to right, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}

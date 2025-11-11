@@ -1,20 +1,473 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Blank
+<ion-header [translucent]="true" class="home-header bg-white dark:bg-gray-800 shadow-sm">
+  <ion-toolbar class="bg-white dark:bg-gray-800">
+    <!-- Back Button & Navigation -->
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()" class="text-gray-600 dark:text-gray-300 hover:text-orange-500 transition-colors duration-300" fill="clear">
+        <ion-icon name="arrow-back" class="text-xl"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title class="flex items-center justify-center">
+      <div class="flex items-center space-x-3">
+        <!-- User Photo in Header - Click to Change -->
+        <div (click)="changeProfilePhoto()" class="cursor-pointer relative group">
+          <div *ngIf="userPhoto" class="w-8 h-8 md:w-10 md:h-10 rounded-full overflow-hidden border-2 border-orange-500 shadow-lg">
+            <img [src]="userPhoto" [alt]="user?.name" class="w-full h-full object-cover">
+          </div>
+          <div *ngIf="!userPhoto" class="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center shadow-lg text-white font-bold text-xs md:text-sm">
+            {{ user?.name?.charAt(0) || 'U' }}
+          </div>
+          <!-- Edit Icon Overlay -->
+          <div class="absolute inset-0 bg-black bg-opacity-40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <ion-icon name="camera" class="text-white text-xs md:text-sm"></ion-icon>
+          </div>
+        </div>
+        <div class="hidden sm:block">
+          <h1 class="text-lg md:text-xl font-bold text-gray-800 dark:text-white">RecipeFinder</h1>
+          <p class="text-xs text-gray-500 dark:text-gray-400">Hello, {{ user?.name }}!</p>
+        </div>
+      </div>
     </ion-title>
+
+    <!-- Right Side Actions -->
+    <ion-buttons slot="end">
+      <!-- Theme Toggle -->
+      <ion-button (click)="toggleTheme()" class="text-gray-600 dark:text-gray-300 hover:text-orange-500 transition-colors duration-300" fill="clear">
+        <ion-icon [name]="isDarkTheme ? 'sunny' : 'moon'" class="text-lg md:text-xl"></ion-icon>
+      </ion-button>
+      
+      <!-- Favorites -->
+      <ion-button (click)="showFavorites()" class="text-gray-600 dark:text-gray-300 hover:text-orange-500 transition-colors duration-300" fill="clear">
+        <ion-icon name="heart" class="text-lg md:text-xl"></ion-icon>
+      </ion-button>
+      
+      <!-- Logout -->
+      <ion-button (click)="logout()" class="text-gray-600 dark:text-gray-300 hover:text-orange-500 transition-colors duration-300" fill="clear">
+        <ion-icon name="log-out-outline" class="text-lg md:text-xl"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true" class="home-content bg-gray-50 dark:bg-gray-900">
+  <!-- Welcome Section - Fixed Responsive Layout -->
+  <div class="px-4 sm:px-6 pt-4 sm:pt-6">
+    <div class="bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl p-4 sm:p-6 text-white shadow-lg">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+        <!-- User Info - Stack vertically on mobile -->
+        <div class="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4 flex-1">
+          <!-- User Photo - Centered on mobile -->
+          <div (click)="changeProfilePhoto()" class="cursor-pointer relative group self-center sm:self-auto">
+            <div *ngIf="userPhoto" class="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-2 border-white shadow-lg">
+              <img [src]="userPhoto" [alt]="user?.name" class="w-full h-full object-cover">
+            </div>
+            <div *ngIf="!userPhoto" class="w-16 h-16 sm:w-20 sm:h-20 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm border-2 border-white">
+              <span class="text-white font-bold text-xl sm:text-2xl">{{ user?.name?.charAt(0) || 'U' }}</span>
+            </div>
+            <!-- Edit Icon Overlay -->
+            <div class="absolute inset-0 bg-black bg-opacity-40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <ion-icon name="camera" class="text-white text-lg sm:text-xl"></ion-icon>
+            </div>
+          </div>
+          
+          <!-- User Details - Centered text on mobile, left aligned on larger screens -->
+          <div class="text-center sm:text-left flex-1">
+            <h2 class="text-xl sm:text-2xl font-bold mb-1 sm:mb-2">{{ greeting }}, {{ user?.name }}! 👋</h2>
+            <p class="text-orange-100 text-sm mb-3 sm:mb-4">Discover amazing recipes from around the world</p>
+            
+            <!-- Stats Row - Wrap on mobile -->
+            <div class="flex flex-wrap justify-center sm:justify-start gap-2 text-xs sm:text-sm">
+              <div class="flex items-center space-x-1 bg-white/20 px-2 sm:px-3 py-1 rounded-full">
+                <ion-icon name="flame" class="text-yellow-300 text-xs sm:text-sm"></ion-icon>
+                <span>{{ totalRecipes }}+ Recipes</span>
+              </div>
+              <div class="flex items-center space-x-1 bg-white/20 px-2 sm:px-3 py-1 rounded-full">
+                <ion-icon name="globe" class="text-yellow-300 text-xs sm:text-sm"></ion-icon>
+                <span>50+ Cuisines</span>
+              </div>
+              <div class="flex items-center space-x-1 bg-white/20 px-2 sm:px-3 py-1 rounded-full">
+                <ion-icon name="time" class="text-yellow-300 text-xs sm:text-sm"></ion-icon>
+                <span>{{ currentTime }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+        <!-- Decorative Icon - Hidden on mobile, shown on medium screens and up -->
+        <div class="hidden md:block mt-4 sm:mt-0">
+          <div class="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+            <ion-icon name="restaurant" class="text-3xl sm:text-4xl text-white"></ion-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rest of the home page content remains the same -->
+  <!-- Stats Cards -->
+  <div class="px-4 sm:px-6 py-4">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+      <div class="bg-white dark:bg-gray-800 rounded-xl p-3 sm:p-4 shadow-sm border border-gray-100 dark:border-gray-700">
+        <div class="flex items-center space-x-2 sm:space-x-3">
+          <div class="w-8 h-8 sm:w-10 sm:h-10 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
+            <ion-icon name="bookmark" class="text-green-600 dark:text-green-400 text-sm sm:text-lg"></ion-icon>
+          </div>
+          <div>
+            <p class="text-lg sm:text-2xl font-bold text-gray-800 dark:text-white">{{ favorites.length }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400">Saved</p>
+          </div>
+        </div>
+      </div>
+      <div class="bg-white dark:bg-gray-800 rounded-xl p-3 sm:p-4 shadow-sm border border-gray-100 dark:border-gray-700">
+        <div class="flex items-center space-x-2 sm:space-x-3">
+          <div class="w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
+            <ion-icon name="search" class="text-blue-600 dark:text-blue-400 text-sm sm:text-lg"></ion-icon>
+          </div>
+          <div>
+            <p class="text-lg sm:text-2xl font-bold text-gray-800 dark:text-white">{{ searchCount }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400">Searches</p>
+          </div>
+        </div>
+      </div>
+      <div class="bg-white dark:bg-gray-800 rounded-xl p-3 sm:p-4 shadow-sm border border-gray-100 dark:border-gray-700">
+        <div class="flex items-center space-x-2 sm:space-x-3">
+          <div class="w-8 h-8 sm:w-10 sm:h-10 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
+            <ion-icon name="star" class="text-purple-600 dark:text-purple-400 text-sm sm:text-lg"></ion-icon>
+          </div>
+          <div>
+            <p class="text-lg sm:text-2xl font-bold text-gray-800 dark:text-white">{{ recentRecipes.length }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400">Recent</p>
+          </div>
+        </div>
+      </div>
+      <div class="bg-white dark:bg-gray-800 rounded-xl p-3 sm:p-4 shadow-sm border border-gray-100 dark:border-gray-700">
+        <div class="flex items-center space-x-2 sm:space-x-3">
+          <div class="w-8 h-8 sm:w-10 sm:h-10 bg-orange-100 dark:bg-orange-900 rounded-lg flex items-center justify-center">
+            <ion-icon name="trending-up" class="text-orange-600 dark:text-orange-400 text-sm sm:text-lg"></ion-icon>
+          </div>
+          <div>
+            <p class="text-lg sm:text-2xl font-bold text-gray-800 dark:text-white">24</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400">Trending</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="px-4 sm:px-6 py-4">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-base sm:text-lg font-bold text-gray-800 dark:text-white">Quick Categories</h3>
+      <!-- <ion-button fill="clear" size="small" class="text-orange-500 text-xs sm:text-sm">
+        View All
+        <ion-icon name="chevron-forward" class="ml-1"></ion-icon>
+      </ion-button> -->
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+      <div *ngFor="let category of quickCategories" 
+           class="bg-white dark:bg-gray-800 rounded-xl p-3 sm:p-4 text-center shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 cursor-pointer border border-gray-100 dark:border-gray-700 group"
+           (click)="searchRecipesByCategory(category.name)">
+        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mx-auto mb-2 sm:mb-3 transition-all duration-300 group-hover:scale-110"
+             [class]="category.bgColor">
+          <ion-icon [name]="category.icon" class="text-lg sm:text-2xl text-white"></ion-icon>
+        </div>
+        <span class="text-xs sm:text-sm font-medium text-gray-700 dark:text-white">{{ category.name }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Section -->
+  <div class="px-4 sm:px-6 py-4">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+      <div class="flex items-center space-x-3 mb-4 sm:mb-6">
+        <div class="w-8 h-8 sm:w-10 sm:h-10 bg-orange-500 rounded-xl flex items-center justify-center">
+          <ion-icon name="search" class="text-white text-sm sm:text-lg"></ion-icon>
+        </div>
+        <div>
+          <h3 class="text-base sm:text-lg font-bold text-gray-800 dark:text-white">Discover Recipes</h3>
+          <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Search by name, ingredient, or cuisine</p>
+        </div>
+      </div>
+
+      <div class="relative mb-4">
+        <ion-item lines="none" class="bg-gray-50 dark:bg-gray-700 rounded-2xl border border-gray-200 dark:border-gray-600 focus-within:border-orange-400 transition-all duration-300">
+          <ion-icon name="search" slot="start" class="text-gray-400 dark:text-gray-300 text-sm sm:text-lg ml-2"></ion-icon>
+          <ion-input
+            [(ngModel)]="searchQuery"
+            placeholder="Try 'pasta', 'chicken', or 'chocolate cake'"
+            (keyup.enter)="searchRecipes()"
+            class="text-gray-700 dark:text-white placeholder-gray-400 dark:placeholder-gray-300 text-sm sm:text-base"
+            clearInput>
+          </ion-input>
+          <ion-button 
+            fill="clear" 
+            slot="end" 
+            (click)="clearSearch()"
+            class="text-gray-400 hover:text-orange-500 mr-2">
+            <ion-icon name="close-circle" class="text-lg sm:text-xl"></ion-icon>
+          </ion-button>
+        </ion-item>
+      </div>
+
+      <!-- Search Filters -->
+      <div class="flex flex-wrap gap-2 mb-4">
+        <ion-chip *ngFor="let filter of searchFilters" 
+                  [outline]="!filter.active"
+                  (click)="toggleFilter(filter)"
+                  class="cursor-pointer transition-all duration-300 text-xs"
+                  [class.bg-orange-500]="filter.active"
+                  [class.text-white]="filter.active">
+          <ion-icon [name]="filter.icon" class="mr-1 text-xs"></ion-icon>
+          <ion-label>{{ filter.name }}</ion-label>
+        </ion-chip>
+      </div>
+
+      <ion-button 
+        expand="block" 
+        (click)="searchRecipes()" 
+        [disabled]="!searchQuery || isLoading"
+        class="h-10 sm:h-12 text-sm sm:text-base font-semibold bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 rounded-xl shadow-lg hover:shadow-xl transform transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:transform-none">
+        <ion-spinner *ngIf="isLoading" class="mr-2" name="crescent"></ion-spinner>
+        <ion-icon name="search" slot="start" *ngIf="!isLoading"></ion-icon>
+        {{ isLoading ? 'Searching...' : 'Search Recipes' }}
+      </ion-button>
+    </div>
+  </div>
+
+  <!-- Recent Recipes -->
+  <div class="px-4 sm:px-6 py-4" *ngIf="recentRecipes.length > 0 && !searchQuery">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-base sm:text-lg font-bold text-gray-800 dark:text-white">Recently Viewed</h3>
+      <ion-button fill="clear" size="small" class="text-orange-500 text-xs sm:text-sm" (click)="clearRecent()">
+        Clear All
+      </ion-button>
+    </div>
+    <div class="flex space-x-3 sm:space-x-4 overflow-x-auto pb-4 scrollbar-hide">
+      <div *ngFor="let recipe of recentRecipes" 
+           class="flex-shrink-0 w-32 sm:w-40 bg-white dark:bg-gray-800 rounded-xl p-3 sm:p-4 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-all duration-300 cursor-pointer"
+           (click)="viewRecipe(recipe.idMeal)">
+        <img [src]="recipe.strMealThumb" [alt]="recipe.strMeal" class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-cover mb-2 sm:mb-3">
+        <h4 class="text-xs sm:text-sm font-semibold text-gray-800 dark:text-white line-clamp-2 mb-1">{{ recipe.strMeal }}</h4>
+        <p class="text-xs text-gray-500 dark:text-gray-400 line-clamp-1">{{ recipe.strCategory }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results Section -->
+  <div class="px-4 sm:px-6 py-4" *ngIf="recipes.length > 0">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6 gap-3">
+      <div>
+        <h3 class="text-lg sm:text-xl font-bold text-gray-800 dark:text-white">Found {{ recipes.length }} Recipes</h3>
+        <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Delicious recipes waiting for you</p>
+      </div>
+      <div class="flex space-x-2">
+        <ion-button 
+          fill="outline" 
+          size="small" 
+          (click)="toggleViewMode()"
+          class="text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 text-xs">
+          <ion-icon [name]="isGridView ? 'list' : 'grid'" class="mr-1"></ion-icon>
+          {{ isGridView ? 'List' : 'Grid' }}
+        </ion-button>
+        <ion-button 
+          fill="outline" 
+          size="small" 
+          (click)="clearSearch()"
+          class="text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 text-xs">
+          <ion-icon name="close" slot="start"></ion-icon>
+          Clear
+        </ion-button>
+      </div>
+    </div>
+    
+    <!-- Grid View -->
+    <div *ngIf="isGridView" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+      <div 
+        *ngFor="let recipe of recipes" 
+        class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100 dark:border-gray-700 overflow-hidden group">
+        
+        <!-- Recipe Image -->
+        <div class="relative overflow-hidden">
+          <img 
+            [src]="recipe.strMealThumb" 
+            [alt]="recipe.strMeal" 
+            class="w-full h-40 sm:h-48 object-cover transition-transform duration-500 group-hover:scale-110" />
+          <div class="absolute top-3 sm:top-4 right-3 sm:right-4">
+            <div class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full px-2 sm:px-3 py-1 flex items-center space-x-1">
+              <ion-icon name="time" class="text-orange-500 text-xs sm:text-sm"></ion-icon>
+              <span class="text-xs font-medium text-gray-700 dark:text-white">30min</span>
+            </div>
+          </div>
+          <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3 sm:p-4">
+            <div class="flex items-center space-x-2 text-white text-xs sm:text-sm">
+              <ion-icon name="restaurant" class="text-orange-300"></ion-icon>
+              <span>{{ recipe.strCategory }}</span>
+              <ion-icon name="location" class="ml-1 sm:ml-2 text-orange-300"></ion-icon>
+              <span>{{ recipe.strArea }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recipe Content -->
+        <div class="p-4 sm:p-5">
+          <h4 class="text-base sm:text-lg font-bold text-gray-800 dark:text-white mb-2 line-clamp-1">{{ recipe.strMeal }}</h4>
+          <p class="text-gray-600 dark:text-gray-300 text-xs sm:text-sm mb-3 sm:mb-4 line-clamp-2">
+            {{ (recipe.strInstructions || 'No description available').substring(0, 100) }}...
+          </p>
+          
+          <!-- Tags -->
+          <div class="flex flex-wrap gap-1 sm:gap-2 mb-3 sm:mb-4" *ngIf="recipe.strTags">
+            <span *ngFor="let tag of getTags(recipe.strTags)" 
+                  class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-1 rounded-lg text-xs font-medium">
+              {{ tag }}
+            </span>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex space-x-2 sm:space-x-3">
+            <ion-button 
+              expand="block" 
+              fill="solid" 
+              color="primary"
+              (click)="viewRecipe(recipe.idMeal)"
+              class="flex-1 h-8 sm:h-10 text-xs sm:text-sm font-semibold bg-gradient-to-r from-orange-500 to-red-500 rounded-xl">
+              <ion-icon name="book" slot="start" class="text-xs"></ion-icon>
+              View Recipe
+            </ion-button>
+            <ion-button 
+              fill="outline" 
+              color="medium"
+              (click)="toggleFavorite(recipe)"
+              class="h-8 w-8 sm:h-10 sm:w-10 rounded-xl border-gray-300 dark:border-gray-600">
+              <ion-icon 
+                [name]="isFavorite(recipe.idMeal) ? 'heart' : 'heart-outline'" 
+                [class.text-red-500]="isFavorite(recipe.idMeal)"
+                class="text-sm sm:text-lg">
+              </ion-icon>
+            </ion-button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- List View -->
+    <div *ngIf="!isGridView" class="space-y-3 sm:space-y-4">
+      <div *ngFor="let recipe of recipes" 
+           class="bg-white dark:bg-gray-800 rounded-2xl p-3 sm:p-4 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-all duration-300 group">
+        <div class="flex items-center space-x-3 sm:space-x-4">
+          <img [src]="recipe.strMealThumb" [alt]="recipe.strMeal" class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl object-cover">
+          <div class="flex-1 min-w-0">
+            <h4 class="text-base sm:text-lg font-bold text-gray-800 dark:text-white mb-1">{{ recipe.strMeal }}</h4>
+            <div class="flex items-center space-x-2 sm:space-x-3 text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-2">
+              <span class="flex items-center space-x-1">
+                <ion-icon name="restaurant" class="text-orange-500"></ion-icon>
+                <span>{{ recipe.strCategory }}</span>
+              </span>
+              <span class="flex items-center space-x-1">
+                <ion-icon name="location" class="text-orange-500"></ion-icon>
+                <span>{{ recipe.strArea }}</span>
+              </span>
+              <span class="flex items-center space-x-1">
+                <ion-icon name="time" class="text-orange-500"></ion-icon>
+                <span>30min</span>
+              </span>
+            </div>
+            <p class="text-gray-600 dark:text-gray-300 text-xs sm:text-sm line-clamp-2">
+              {{ (recipe.strInstructions || 'No description available').substring(0, 120) }}...
+            </p>
+          </div>
+          <div class="flex flex-col space-y-2">
+            <ion-button 
+              fill="solid" 
+              size="small"
+              (click)="viewRecipe(recipe.idMeal)"
+              class="bg-orange-500 text-white text-xs">
+              View
+            </ion-button>
+            <ion-button 
+              fill="outline" 
+              size="small"
+              (click)="toggleFavorite(recipe)"
+              class="border-gray-300 dark:border-gray-600 text-xs">
+              <ion-icon 
+                [name]="isFavorite(recipe.idMeal) ? 'heart' : 'heart-outline'" 
+                [class.text-red-500]="isFavorite(recipe.idMeal)">
+              </ion-icon>
+            </ion-button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- No Results -->
+  <div *ngIf="searchQuery && !isLoading && recipes.length === 0" class="px-4 sm:px-6 py-8 sm:py-12 text-center">
+    <div class="max-w-md mx-auto">
+      <div class="w-16 h-16 sm:w-24 sm:h-24 bg-gray-100 dark:bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6">
+        <ion-icon name="search-outline" class="text-2xl sm:text-4xl text-gray-400"></ion-icon>
+      </div>
+      <h3 class="text-lg sm:text-xl font-bold text-gray-800 dark:text-white mb-2">No recipes found</h3>
+      <p class="text-gray-500 dark:text-gray-400 text-sm sm:text-base mb-4 sm:mb-6">Try searching for different ingredients or dish names</p>
+      <ion-button 
+        fill="outline" 
+        (click)="clearSearch()"
+        class="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm">
+        Clear Search
+      </ion-button>
+    </div>
+  </div>
+
+  <!-- Quick Tips & Features -->
+  <div *ngIf="!searchQuery && !isLoading" class="px-4 sm:px-6 py-6 sm:py-8">
+    <!-- Cooking Tips -->
+    <div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl p-4 sm:p-6 text-white mb-6 sm:mb-8">
+      <div class="flex items-center space-x-3 sm:space-x-4">
+        <div class="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+          <ion-icon name="bulb" class="text-xl sm:text-2xl text-yellow-300"></ion-icon>
+        </div>
+        <div class="flex-1">
+          <h4 class="font-bold text-base sm:text-lg mb-1">Cooking Tip of the Day</h4>
+          <p class="text-blue-100 text-xs sm:text-sm">{{ getRandomTip() }}</p>
+        </div>
+        <ion-button fill="clear" class="text-white" (click)="nextTip()">
+          <ion-icon name="chevron-forward"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+
+    <!-- Feature Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+      <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+        <div class="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 dark:bg-green-900 rounded-xl flex items-center justify-center mb-3 sm:mb-4">
+          <ion-icon name="download" class="text-xl sm:text-2xl text-green-600 dark:text-green-400"></ion-icon>
+        </div>
+        <h4 class="font-bold text-gray-800 dark:text-white mb-2 text-sm sm:text-base">Save Recipes</h4>
+        <p class="text-gray-600 dark:text-gray-300 text-xs sm:text-sm">Save your favorite recipes for quick access later</p>
+      </div>
+      <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+        <div class="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 dark:bg-blue-900 rounded-xl flex items-center justify-center mb-3 sm:mb-4">
+          <ion-icon name="share-social" class="text-xl sm:text-2xl text-blue-600 dark:text-blue-400"></ion-icon>
+        </div>
+        <h4 class="font-bold text-gray-800 dark:text-white mb-2 text-sm sm:text-base">Share with Friends</h4>
+        <p class="text-gray-600 dark:text-gray-300 text-xs sm:text-sm">Share amazing recipes with your friends and family</p>
+      </div>
+      <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+        <div class="w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 dark:bg-purple-900 rounded-xl flex items-center justify-center mb-3 sm:mb-4">
+          <ion-icon name="trending-up" class="text-xl sm:text-2xl text-purple-600 dark:text-purple-400"></ion-icon>
+        </div>
+        <h4 class="font-bold text-gray-800 dark:text-white mb-2 text-sm sm:text-base">Weekly Trends</h4>
+        <p class="text-gray-600 dark:text-gray-300 text-xs sm:text-sm">Discover what's trending in the cooking world</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="px-4 sm:px-6 py-8 sm:py-12">
+    <div class="flex flex-col items-center justify-center space-y-3 sm:space-y-4">
+      <div class="w-12 h-12 sm:w-16 sm:h-16 bg-orange-100 dark:bg-orange-900 rounded-2xl flex items-center justify-center">
+        <ion-spinner name="crescent" class="text-orange-500"></ion-spinner>
+      </div>
+      <p class="text-gray-600 dark:text-gray-300 font-medium text-sm sm:text-base">Searching delicious recipes...</p>
+    </div>
   </div>
 </ion-content>

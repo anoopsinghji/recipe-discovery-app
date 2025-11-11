@@ -1,0 +1,343 @@
+<ion-header [translucent]="true" class="recipe-header bg-white dark:bg-gray-800 shadow-sm">
+  <ion-toolbar class="bg-white dark:bg-gray-800">
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()" class="text-gray-600 dark:text-gray-300 hover:text-orange-500 transition-colors duration-300" fill="clear">
+        <ion-icon name="arrow-back" class="text-xl"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    
+    <ion-title class="text-center">
+      <h1 class="text-lg font-bold text-gray-800 dark:text-black line-clamp-1">{{ recipe?.strMeal || 'Recipe Details' }}</h1>
+    </ion-title>
+
+    <ion-buttons slot="end">
+      <!-- Favorite Button -->
+      <ion-button (click)="toggleFavorite()" class="text-gray-600 dark:text-gray-300 hover:text-red-500 transition-colors duration-300" fill="clear">
+        <ion-icon [name]="isFavorite ? 'heart' : 'heart-outline'" 
+                  [class.text-red-500]="isFavorite"
+                  class="text-xl"></ion-icon>
+      </ion-button>
+      
+      <!-- Share Button -->
+      <ion-button (click)="shareRecipe()" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 transition-colors duration-300" fill="clear">
+        <ion-icon name="share-social" class="text-xl"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="recipe-content bg-gray-50 dark:bg-gray-900">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="flex flex-col items-center justify-center min-h-screen px-6">
+    <div class="w-20 h-20 bg-orange-100 dark:bg-orange-900 rounded-2xl flex items-center justify-center mb-6">
+      <ion-spinner name="crescent" class="text-orange-500 text-2xl"></ion-spinner>
+    </div>
+    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Loading Recipe</h3>
+    <p class="text-gray-500 dark:text-gray-400 text-center">Getting everything ready for you...</p>
+  </div>
+
+  <!-- Recipe Details -->
+  <div *ngIf="!isLoading && recipe" class="pb-8">
+    <!-- Hero Section -->
+    <div class="relative">
+      <!-- Recipe Image -->
+      <div class="relative h-80 md:h-96 overflow-hidden">
+        <img [src]="recipe.strMealThumb" [alt]="recipe.strMeal" 
+             class="w-full h-full object-cover transition-transform duration-700">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+        
+        <!-- Quick Info Overlay -->
+        <div class="absolute bottom-4 left-4 right-4">
+          <div class="flex items-center justify-between text-white">
+            <div>
+              <h1 class="text-2xl md:text-3xl font-bold mb-2 drop-shadow-lg">{{ recipe.strMeal }}</h1>
+              <div class="flex items-center space-x-4 text-sm">
+                <span class="flex items-center space-x-1 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full">
+                  <ion-icon name="restaurant" class="text-orange-300"></ion-icon>
+                  <span>{{ recipe.strCategory }}</span>
+                </span>
+                <span class="flex items-center space-x-1 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full">
+                  <ion-icon name="location" class="text-orange-300"></ion-icon>
+                  <span>{{ recipe.strArea }}</span>
+                </span>
+                <span class="flex items-center space-x-1 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full">
+                  <ion-icon name="time" class="text-orange-300"></ion-icon>
+                  <span>30-45 min</span>
+                </span>
+              </div>
+            </div>
+            <div class="hidden md:flex items-center space-x-2">
+              <ion-button (click)="toggleFavorite()" 
+                         [color]="isFavorite ? 'danger' : 'light'"
+                         class="rounded-full w-12 h-12">
+                <ion-icon [name]="isFavorite ? 'heart' : 'heart-outline'"></ion-icon>
+              </ion-button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Floating Action Bar -->
+      <div class="absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-11/12 max-w-2xl">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 p-4">
+          <div class="grid grid-cols-4 gap-4 text-center">
+            <div class="flex flex-col items-center">
+              <div class="w-10 h-10 bg-orange-100 dark:bg-orange-900 rounded-xl flex items-center justify-center mb-2">
+                <ion-icon name="time" class="text-orange-500 text-lg"></ion-icon>
+              </div>
+              <span class="text-xs font-medium text-gray-700 dark:text-white">Prep</span>
+              <span class="text-sm text-gray-500 dark:text-gray-400">15 min</span>
+            </div>
+            <div class="flex flex-col items-center">
+              <div class="w-10 h-10 bg-green-100 dark:bg-green-900 rounded-xl flex items-center justify-center mb-2">
+                <ion-icon name="timer" class="text-green-500 text-lg"></ion-icon>
+              </div>
+              <span class="text-xs font-medium text-gray-700 dark:text-white">Cook</span>
+              <span class="text-sm text-gray-500 dark:text-gray-400">30 min</span>
+            </div>
+            <div class="flex flex-col items-center">
+              <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-xl flex items-center justify-center mb-2">
+                <ion-icon name="people" class="text-blue-500 text-lg"></ion-icon>
+              </div>
+              <span class="text-xs font-medium text-gray-700 dark:text-white">Serves</span>
+              <span class="text-sm text-gray-500 dark:text-gray-400">4</span>
+            </div>
+            <div class="flex flex-col items-center">
+              <div class="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-xl flex items-center justify-center mb-2">
+                <ion-icon name="flame" class="text-purple-500 text-lg"></ion-icon>
+              </div>
+              <span class="text-xs font-medium text-gray-700 dark:text-white">Calories</span>
+              <span class="text-sm text-gray-500 dark:text-gray-400">320</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="px-6 pt-12 max-w-4xl mx-auto">
+      <!-- Ingredients Section -->
+      <div class="mb-8">
+        <div class="flex items-center space-x-3 mb-6">
+          <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center">
+            <ion-icon name="cart" class="text-white text-lg"></ion-icon>
+          </div>
+          <div>
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Ingredients</h2>
+            <p class="text-gray-500 dark:text-gray-400">Everything you need to make this delicious recipe</p>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div *ngFor="let item of ingredients; let i = index" 
+                 class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200">
+              <div class="w-8 h-8 bg-orange-100 dark:bg-orange-900 rounded-lg flex items-center justify-center flex-shrink-0">
+                <span class="text-orange-600 dark:text-orange-400 font-bold text-sm">{{ i + 1 }}</span>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="font-medium text-gray-800 dark:text-white text-sm">{{ item.ingredient }}</p>
+              </div>
+              <div class="text-right">
+                <p class="text-orange-500 font-semibold text-sm">{{ item.measure }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Shopping List Feature -->
+          <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-600">
+            <ion-button expand="block" fill="outline" (click)="addToShoppingList()" class="border-orange-500 text-orange-500">
+              <ion-icon name="list" slot="start"></ion-icon>
+              Add to Shopping List
+            </ion-button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Instructions Section -->
+      <div class="mb-8">
+        <div class="flex items-center space-x-3 mb-6">
+          <div class="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center">
+            <ion-icon name="book" class="text-white text-lg"></ion-icon>
+          </div>
+          <div>
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Instructions</h2>
+            <p class="text-gray-500 dark:text-gray-400">Step-by-step guide to make this recipe</p>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800  rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+          <div class="prose prose-orange max-w-none dark:prose-invert">
+            <div class="instructions-content" [innerHTML]="formatInstructions(recipe.strInstructions)"></div>
+          </div>
+
+          <!-- Cooking Tips -->
+          <div class="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
+            <div class="flex items-start space-x-3">
+              <ion-icon name="bulb" class="text-blue-500 text-xl mt-1 flex-shrink-0"></ion-icon>
+              <div>
+                <h4 class="font-semibold text-blue-800 dark:text-blue-200 mb-1">Pro Tip</h4>
+                <p class="text-blue-700 dark:text-blue-300 text-sm">
+                  For best results, let the dish rest for 5-10 minutes before serving. This allows flavors to meld together perfectly.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Video Section -->
+      <div *ngIf="recipe.strYoutube" class="mb-8">
+        <div class="flex items-center space-x-3 mb-6">
+          <div class="w-10 h-10 bg-red-500 rounded-xl flex items-center justify-center">
+            <ion-icon name="play-circle" class="text-white text-lg"></ion-icon>
+          </div>
+          <div>
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Video Tutorial</h2>
+            <p class="text-gray-500 dark:text-gray-400">Watch how to make this recipe</p>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+          <div class="aspect-w-16 aspect-h-9 bg-gray-200 dark:bg-gray-700 rounded-xl overflow-hidden relative group">
+            <img [src]="recipe.strMealThumb" [alt]="recipe.strMeal" class="w-full h-48 object-cover">
+            <div class="absolute inset-0 bg-black/40 flex items-center justify-center group-hover:bg-black/50 transition-all duration-300">
+              <ion-button (click)="openYouTubeVideo()" 
+                         class="bg-red-600 hover:bg-red-700 rounded-full w-16 h-16">
+                <ion-icon name="play" class="text-white text-2xl ml-1"></ion-icon>
+              </ion-button>
+            </div>
+          </div>
+          <div class="mt-4 text-center">
+            <ion-button (click)="openYouTubeVideo()" 
+                       expand="block" 
+                       color="danger"
+                       class="h-12 font-semibold">
+              <ion-icon name="logo-youtube" slot="start"></ion-icon>
+              Watch on YouTube
+            </ion-button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Nutrition Information -->
+      <div class="mb-8">
+        <div class="flex items-center space-x-3 mb-6">
+          <div class="w-10 h-10 bg-purple-500 rounded-xl flex items-center justify-center">
+            <ion-icon name="fitness" class="text-white text-lg"></ion-icon>
+          </div>
+          <div>
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Nutrition Info</h2>
+            <p class="text-gray-500 dark:text-gray-400">Approximate nutritional values per serving</p>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+            <div class="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-xl">
+              <p class="text-2xl font-bold text-orange-600 dark:text-orange-400">320</p>
+              <p class="text-sm text-gray-600 dark:text-gray-300">Calories</p>
+            </div>
+            <div class="p-4 bg-green-50 dark:bg-green-900/20 rounded-xl">
+              <p class="text-2xl font-bold text-green-600 dark:text-green-400">12g</p>
+              <p class="text-sm text-gray-600 dark:text-gray-300">Protein</p>
+            </div>
+            <div class="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
+              <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">45g</p>
+              <p class="text-sm text-gray-600 dark:text-gray-300">Carbs</p>
+            </div>
+            <div class="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
+              <p class="text-2xl font-bold text-purple-600 dark:text-purple-400">8g</p>
+              <p class="text-sm text-gray-600 dark:text-gray-300">Fat</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tags Section -->
+      <div *ngIf="recipe.strTags" class="mb-8">
+        <div class="flex items-center space-x-3 mb-6">
+          <div class="w-10 h-10 bg-indigo-500 rounded-xl flex items-center justify-center">
+            <ion-icon name="pricetags" class="text-white text-lg"></ion-icon>
+          </div>
+          <div>
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Tags & Categories</h2>
+            <p class="text-gray-500 dark:text-gray-400">Related categories and tags</p>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+          <div class="flex flex-wrap gap-3">
+            <span *ngFor="let tag of getTags(recipe.strTags)" 
+                  class="bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 px-4 py-2 rounded-full text-sm font-medium hover:bg-indigo-200 dark:hover:bg-indigo-800 transition-colors duration-200 cursor-pointer"
+                  (click)="searchByTag(tag)">
+              #{{ tag }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Similar Recipes (Placeholder) -->
+      <div class="mb-8">
+        <div class="flex items-center space-x-3 mb-6">
+          <div class="w-10 h-10 bg-pink-500 rounded-xl flex items-center justify-center">
+            <ion-icon name="restaurant" class="text-white text-lg"></ion-icon>
+          </div>
+          <div>
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-white">You Might Also Like</h2>
+            <p class="text-gray-500 dark:text-gray-400">Similar recipes you might enjoy</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div *ngFor="let similarRecipe of similarRecipes" 
+               class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-all duration-300 cursor-pointer group"
+               (click)="viewSimilarRecipe(similarRecipe.idMeal)">
+            <div class="flex items-center space-x-4">
+              <img [src]="similarRecipe.strMealThumb" [alt]="similarRecipe.strMeal" 
+                   class="w-16 h-16 rounded-xl object-cover group-hover:scale-110 transition-transform duration-300">
+              <div class="flex-1 min-w-0">
+                <h4 class="font-semibold text-gray-800 dark:text-white text-sm line-clamp-2 mb-1">{{ similarRecipe.strMeal }}</h4>
+                <p class="text-gray-500 dark:text-gray-400 text-xs">{{ similarRecipe.strCategory }}</p>
+              </div>
+              <ion-icon name="chevron-forward" class="text-gray-400 group-hover:text-orange-500 transition-colors duration-300"></ion-icon>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="!isLoading && !recipe" class="flex flex-col items-center justify-center min-h-screen px-6">
+    <div class="w-24 h-24 bg-red-100 dark:bg-red-900 rounded-2xl flex items-center justify-center mb-6">
+      <ion-icon name="alert-circle" class="text-red-500 text-4xl"></ion-icon>
+    </div>
+    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Recipe Not Found</h3>
+    <p class="text-gray-500 dark:text-gray-400 text-center mb-6">Sorry, we couldn't find the recipe you're looking for.</p>
+    <ion-button (click)="goBack()" fill="solid" color="primary">
+      <ion-icon name="arrow-back" slot="start"></ion-icon>
+      Back to Recipes
+    </ion-button>
+  </div>
+
+  <!-- Floating Action Button -->
+  <div class="fixed bottom-6 right-6 z-10">
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+      <ion-fab-button class="bg-gradient-to-r from-orange-500 to-red-500 shadow-lg">
+        <ion-icon name="ellipsis-vertical"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-list side="top">
+        <ion-fab-button (click)="shareRecipe()" class="bg-blue-500">
+          <ion-icon name="share-social"></ion-icon>
+        </ion-fab-button>
+        <ion-fab-button (click)="toggleFavorite()" [color]="isFavorite ? 'danger' : 'medium'">
+          <ion-icon [name]="isFavorite ? 'heart' : 'heart-outline'"></ion-icon>
+        </ion-fab-button>
+        <ion-fab-button (click)="printRecipe()" class="bg-green-500">
+          <ion-icon name="print"></ion-icon>
+        </ion-fab-button>
+      </ion-fab-list>
+    </ion-fab>
+  </div>
+</ion-content>

@@ -1,0 +1,156 @@
+<ion-header [translucent]="true" class="auth-header">
+  <ion-toolbar class="bg-transparent">
+    <ion-title class="text-lg font-semibold text-black flex items-center justify-center">
+      <ion-icon name="restaurant" class="mr-2 text-primary-400"></ion-icon>
+      Recipe Recommender
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="auth-content relative overflow-hidden">
+  <!-- Animated Background -->
+  <div class="absolute inset-0 bg-gradient-to-br from-purple-600 via-blue-600 to-purple-800">
+    <!-- Animated Circles -->
+    <div class="absolute -top-20 -right-20 w-80 h-80 bg-white/10 rounded-full animate-pulse-slow"></div>
+    <div class="absolute -bottom-32 -left-32 w-96 h-96 bg-white/5 rounded-full animate-bounce-slow"></div>
+    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-white/5 rounded-full animate-ping-slow"></div>
+    
+    <!-- Floating Elements -->
+    <div class="absolute top-20 left-10 animate-float">
+      <div class="w-8 h-8 bg-white/20 rounded-full"></div>
+    </div>
+    <div class="absolute top-40 right-20 animate-float-delayed">
+      <div class="w-6 h-6 bg-white/30 rounded-full"></div>
+    </div>
+    <div class="absolute bottom-40 left-20 animate-float-slow">
+      <div class="w-4 h-4 bg-white/25 rounded-full"></div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="relative z-10 flex items-center justify-center min-h-full px-4 py-8">
+    <div class="w-full max-w-md">
+      <!-- Card with Glass Morphism Effect -->
+      <div class="backdrop-blur-lg auth-card-container rounded-3xl shadow-2xl overflow-hidden transform transition-all duration-500 hover:scale-[1.02]">
+        
+        <!-- Header Section -->
+        <div class="text-center p-8 auth-card-header">
+          <!-- Animated Logo -->
+          <div class="flex justify-center mb-4">
+            <div class="w-20 h-20 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center shadow-lg animate-bounce-subtle">
+              <ion-icon name="restaurant" class="text-3xl text-white"></ion-icon>
+            </div>
+          </div>
+          
+          <h1 class="text-3xl font-bold text-white mb-2 animate-fade-in-up">
+            {{ title }}
+          </h1>
+          <p class="text-white/80 text-lg animate-fade-in-up animation-delay-100">
+            {{ subtitle }}
+          </p>
+        </div>
+
+        <!-- Form Section -->
+        <div class="p-8 bg-transparent">
+          <form (ngSubmit)="submit()" class="space-y-6">
+            <!-- Name Field (Only for Registration) -->
+            <div *ngIf="!isLogin" class="animate-fade-in-up animation-delay-200">
+              <div class="input-container">
+                <ion-icon name="person"></ion-icon>
+                <ion-item lines="none" class="custom-bg-transparent custom-border-light rounded-2xl transition-all duration-300 hover:border-white/40 h-16"
+                          (ionFocus)="setFocus($event)" (ionBlur)="setBlur($event)">
+                  <ion-input
+                    type="text"
+                    [(ngModel)]="name"
+                    name="name"
+                    placeholder="Full Name"
+                    class="text-white placeholder-white/60 pl-12 pr-4 h-full text-base"
+                    required>
+                  </ion-input>
+                </ion-item>
+              </div>
+            </div>
+
+            <!-- Email Field -->
+            <div class="animate-fade-in-up animation-delay-300">
+              <div class="input-container">
+                <ion-icon name="mail"></ion-icon>
+                <ion-item lines="none" class="custom-bg-transparent custom-border-light rounded-2xl transition-all duration-300 hover:border-white/40 h-16"
+                          (ionFocus)="setFocus($event)" (ionBlur)="setBlur($event)">
+                  <ion-input
+                    type="email"
+                    [(ngModel)]="email"
+                    name="email"
+                    placeholder="Email Address"
+                    class="text-white placeholder-white/60 pl-12 pr-4 h-full text-base"
+                    required>
+                  </ion-input>
+                </ion-item>
+              </div>
+            </div>
+
+            <!-- Password Field -->
+            <div class="animate-fade-in-up animation-delay-400">
+              <div class="input-container">
+                <ion-icon name="lock-closed"></ion-icon>
+                <ion-item lines="none" class="custom-bg-transparent custom-border-light rounded-2xl transition-all duration-300 hover:border-white/40 h-16"
+                          (ionFocus)="setFocus($event)" (ionBlur)="setBlur($event)">
+                  <ion-input
+                    type="password"
+                    [(ngModel)]="password"
+                    name="password"
+                    placeholder="Password"
+                    class="text-white placeholder-white/60 pl-12 pr-4 h-full text-base"
+                    required>
+                  </ion-input>
+                </ion-item>
+              </div>
+              
+            </div>
+
+            <!-- Error Message -->
+            <div *ngIf="errorMessage" class="animate-shake bg-red-500/20 border border-red-400/30 text-white px-4 py-3 rounded-xl flex items-center space-x-3 backdrop-blur-sm">
+              <ion-icon name="warning" class="text-red-300 text-lg flex-shrink-0"></ion-icon>
+              <span class="text-sm font-medium">{{ errorMessage }}</span>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="animate-fade-in-up animation-delay-500">
+              <ion-button 
+                type="submit" 
+                expand="block" 
+                class="h-14 text-lg font-semibold bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 rounded-2xl shadow-lg hover:shadow-xl transform transition-all duration-300 hover:scale-105 active:scale-95"
+                [disabled]="isLoading">
+                <ion-spinner *ngIf="isLoading" class="mr-2" name="crescent"></ion-spinner>
+                {{ submitButtonText }}
+              </ion-button>
+            </div>
+          </form>
+
+          <!-- Toggle Mode -->
+          <div class="text-center mt-8 pt-6 border-t border-white/10 animate-fade-in-up animation-delay-600">
+            <p class="custom-text-black mb-3 text-base">
+              {{ toggleModeText }}
+            </p>
+            <ion-button 
+              fill="clear" 
+              size="small" 
+              class="text-blue hover:text-blue-200 font-semibold transition-colors duration-300 text-base"
+              (click)="toggleMode()">
+              {{ isLogin ? 'Create Account' : 'Sign In' }}
+              <ion-icon name="arrow-forward" class="ml-1"></ion-icon>
+            </ion-button>
+          </div>
+
+          <!-- Demo Info -->
+          <!-- <div *ngIf="isLogin" class="mt-6 p-4 custom-bg-transparent custom-border-light rounded-2xl text-center animate-fade-in-up animation-delay-700">
+            <h4 class="text-white font-semibold mb-2 text-sm">🎯 Quick Start</h4>
+            <p class="custom-text-lighter text-xs">
+              Use any registered email with password: <span class="text-yellow-300 font-semibold">password123</span>
+            </p>
+          </div> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>
