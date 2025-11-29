@@ -7,20 +7,13 @@ import {
   IonToolbar, 
   IonTitle, 
   IonContent, 
-  IonCard, 
-  IonCardHeader, 
-  IonCardTitle, 
-  IonCardSubtitle, 
-  IonCardContent, 
+  
   IonItem, 
-  IonLabel, 
+  
   IonInput, 
   IonButton,
   IonIcon,
-  IonGrid,
-  IonRow,
-  IonCol,
-  IonText,
+  
   IonSpinner
 } from '@ionic/angular/standalone';
 import { AuthService } from '../services/login';
@@ -38,20 +31,12 @@ import { AuthService } from '../services/login';
     IonToolbar, 
     IonTitle, 
     IonContent, 
-    IonCard, 
-    IonCardHeader, 
-    IonCardTitle, 
-    IonCardSubtitle, 
-    IonCardContent, 
+ 
     IonItem, 
-    IonLabel, 
+     
     IonInput, 
     IonButton,
     IonIcon,
-    IonGrid,
-    IonRow,
-    IonCol,
-    IonText,
     IonSpinner
   ]
 })

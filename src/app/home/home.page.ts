@@ -13,11 +13,7 @@ import {
   IonItem, 
   IonInput, 
   IonSpinner, 
-  IonCard, 
-  IonCardHeader, 
-  IonCardTitle, 
-  IonCardSubtitle, 
-  IonCardContent,
+  
   IonChip,
   IonLabel,
   AlertController,
@@ -48,11 +44,6 @@ import { AuthService } from '../services/login';
     IonItem, 
     IonInput, 
     IonSpinner, 
-    IonCard, 
-    IonCardHeader, 
-    IonCardTitle, 
-    IonCardSubtitle, 
-    IonCardContent,
     IonChip,
     IonLabel
   ]
